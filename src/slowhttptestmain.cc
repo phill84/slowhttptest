@@ -73,6 +73,7 @@ static void usage() {
       "  -t verb          verb to use in request, default to GET for\n"
       "                   slow headers and response and to POST for slow body\n"
       "  -u URL           absolute URL of target (http://localhost/)\n"
+      "  -j host          Host header value\n"
       "  -x bytes         max length of each randomized name/value pair of\n"
       "                   followup data per tick, e.g. -x 2 generates\n"
       "                   X-xx: xx for header or &xx=xx for body, where x\n"
@@ -143,6 +144,7 @@ int main(int argc, char **argv) {
     return -1;
   }
   char url[1024] = { 0 };
+  char host[1024] = { 0 };
   char path[1024] = { 0 };
   char proxy[1024] = { 0 };
   char verb[16] = { 0 };
@@ -169,7 +171,7 @@ int main(int argc, char **argv) {
   ProxyType proxy_type = slowhttptest::eNoProxy;
   long tmp;
   int o;
-  while((o = getopt(argc, argv, ":HBRXgha:b:c:d:e:f:i:k:l:m:n:o:p:r:s:t:u:v:w:x:y:z:")) != -1) {
+  while((o = getopt(argc, argv, ":HBRXgha:b:c:d:e:f:i:j:k:l:m:n:o:p:r:s:t:u:v:w:x:y:z:")) != -1) {
     switch (o) {
       case 'a':
         if(!parse_int(range_start, 65539))
@@ -220,6 +222,9 @@ int main(int argc, char **argv) {
       case 'i':
         if(!parse_int(interval))
           return -1;
+        break;
+      case 'j':
+        strncpy(host, optarg, 1023);
         break;
       case 'k':
         if(!parse_int(pipeline_factor, 10))
@@ -315,7 +320,7 @@ int main(int argc, char **argv) {
       type, need_stats, pipeline_factor, probe_interval,
       range_start, range_limit, read_interval, read_len,
       window_lower_limit, window_upper_limit, proxy_type, debug_level));
-  if(!slow_test->init(url, verb, path, proxy, content_type, accept)) {
+  if(!slow_test->init(url, host, verb, path, proxy, content_type, accept)) {
     slowlog(LOG_FATAL, "%s: error setting up slow HTTP test\n", __FUNCTION__);
     return -1;
   } else if(!slow_test->run_test()) {

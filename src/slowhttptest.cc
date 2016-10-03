@@ -211,7 +211,7 @@ const char* SlowHTTPTest::get_random_extra() {
   return random_extra_.c_str();
 }
 
-bool SlowHTTPTest::init(const char* url, const char* verb,
+bool SlowHTTPTest::init(const char* url, const char* host, const char* verb,
     const char* path, const char* proxy,
     const char* content_type, const char* accept) {
   if(!change_fd_limits()) {
@@ -317,7 +317,10 @@ bool SlowHTTPTest::init(const char* url, const char* verb,
     request_.append(base_uri_.getPath());
   request_.append(" HTTP/1.1\r\n");
   request_.append("Host: ");
-  request_.append(base_uri_.getHost());
+  if(strlen(host)) 
+    request_.append(host);
+  else
+    request_.append(base_uri_.getHost());
 
   if(base_uri_.getPort() != 80 && base_uri_.getPort() != 443) {
     request_.append(":");

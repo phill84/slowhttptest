@@ -75,7 +75,7 @@ class SlowHTTPTest {
    int window_upper_limit, ProxyType proxy_type, int debug_level);
   ~SlowHTTPTest();
 
-  bool init(const char* url, const char* verb,
+  bool init(const char* url, const char* host, const char* verb,
     const char* path, const char* proxy,
     const char* content_type, const char* accept);
   void report_parameters();
